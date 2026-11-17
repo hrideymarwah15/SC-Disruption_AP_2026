@@ -1,0 +1,124 @@
+---
+title: SC-Disruption Database ER Diagram
+config:
+  theme: neutral
+  er:
+    layoutDirection: TB
+---
+erDiagram
+    SUPPLY_CHAIN ||--o{ NODE : contains
+    NODE ||--o{ EDGE : "origin of"
+    NODE ||--o{ EDGE : "destination of"
+    NODE ||--o{ INVENTORY : holds
+    PRODUCT ||--o{ INVENTORY : stocked_as
+    NODE ||--o{ ORDER_HEADER : receives
+    ORDER_HEADER ||--|{ ORDER_ITEM : contains
+    PRODUCT ||--o{ ORDER_ITEM : requested_as
+    SUPPLY_CHAIN ||--o{ SCENARIO : tests
+    SCENARIO ||--o{ DISRUPTION : includes
+    SCENARIO ||--o{ SIMULATION_RUN : produces
+    SIMULATION_RUN ||--o{ SIMULATION_EVENT : records
+    SIMULATION_RUN ||--o| SIMULATION_METRIC : summarizes
+
+    SUPPLY_CHAIN {
+        text id PK
+        text name
+        timestamp created_at
+    }
+
+    NODE {
+        text id PK
+        text supply_chain_id FK
+        text name
+        text type
+    }
+
+    EDGE {
+        text id PK
+        text from_node_id FK
+        text to_node_id FK
+        double distance "nullable"
+        double travel_time "nullable"
+    }
+
+    PRODUCT {
+        text id PK
+        text name
+        text sku UK
+        timestamp created_at
+    }
+
+    INVENTORY {
+        text id PK
+        text node_id FK "UK pair"
+        text product_id FK "UK pair"
+        int quantity
+    }
+
+    ORDER_HEADER {
+        text id PK
+        text node_id FK
+        text status
+        int due_step
+        timestamp created_at
+    }
+
+    ORDER_ITEM {
+        text id PK
+        text order_id FK
+        text product_id FK
+        int quantity
+    }
+
+    SCENARIO {
+        text id PK
+        text supply_chain_id FK
+        text name
+        timestamp created_at
+    }
+
+    DISRUPTION {
+        text id PK
+        text scenario_id FK
+        text type
+        text target_id "node or edge"
+        int start_step
+        int duration
+    }
+
+    SIMULATION_RUN {
+        text id PK
+        text scenario_id FK
+        text status
+        int total_steps
+        timestamp started_at
+        timestamp completed_at "nullable"
+    }
+
+    SIMULATION_EVENT {
+        text id PK
+        text run_id FK "UK with sequence"
+        int sequence "UK with run_id"
+        int step
+        text type
+        text target_type
+        text target_id
+        text message
+    }
+
+    SIMULATION_METRIC {
+        text id PK
+        text run_id FK,UK
+        int total_orders
+        int total_demand
+        int fulfilled_quantity
+        int remaining_quantity
+        int stockout_events
+        int stockouts
+        int delayed_orders
+        double additional_cost
+        int recovery_time
+        jsonb affected_nodes
+        jsonb affected_edges
+        jsonb final_state "nullable"
+    }
