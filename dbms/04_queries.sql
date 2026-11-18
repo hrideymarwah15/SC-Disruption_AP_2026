@@ -171,6 +171,174 @@ VALUES ($1, $2, COALESCE($3, 'PENDING'), COALESCE($4, 0), COALESCE($5, CURRENT_T
 INSERT INTO "OrderItem" ("id", "orderId", "productId", "quantity")
 VALUES ($1, $2, $3, $4);
 
+-- =====================================================================
+-- READ queries — Simulation scenario, disruption, and run operations
+-- =====================================================================
+
+-- R09 -- READ
+-- Purpose: Get a scenario by ID with its disruptions ordered by startStep.
+-- Source: simulationRepository.getScenario(id)
+-- Parameter: $1 = scenarioId (TEXT)
+SELECT "Scenario"."id",
+       "Scenario"."supplyChainId",
+       "Scenario"."name",
+       "Scenario"."createdAt"
+FROM "Scenario"
+WHERE "Scenario"."id" = $1;
+
+-- R10 -- READ
+-- Purpose: Get disruptions for a scenario ordered by startStep.
+-- Source: simulationRepository.getScenario(id) -> disruptions include
+-- Parameter: $1 = scenarioId (TEXT)
+SELECT "Disruption"."id",
+       "Disruption"."scenarioId",
+       "Disruption"."type",
+       "Disruption"."targetId",
+       "Disruption"."startStep",
+       "Disruption"."duration"
+FROM "Disruption"
+WHERE "Disruption"."scenarioId" = $1
+ORDER BY "Disruption"."startStep" ASC;
+
+-- R11 -- READ
+-- Purpose: Get simulation runs for a scenario ordered by startedAt descending.
+-- Source: simulationRepository.getScenario(id) -> runs include
+-- Parameter: $1 = scenarioId (TEXT)
+SELECT "SimulationRun"."id",
+       "SimulationRun"."scenarioId",
+       "SimulationRun"."status",
+       "SimulationRun"."totalSteps",
+       "SimulationRun"."startedAt",
+       "SimulationRun"."completedAt"
+FROM "SimulationRun"
+WHERE "SimulationRun"."scenarioId" = $1
+ORDER BY "SimulationRun"."startedAt" DESC;
+
+-- R12 -- READ
+-- Purpose: Load a simulation run with its scenario, disruptions, events, and metrics.
+-- Source: simulationRepository.getRun(id)
+-- Called by: simulationService.getSimulation(), simulationRepository.getImpactSummary()
+-- Parameter: $1 = runId (TEXT)
+SELECT "SimulationRun"."id",
+       "SimulationRun"."scenarioId",
+       "SimulationRun"."status",
+       "SimulationRun"."totalSteps",
+       "SimulationRun"."startedAt",
+       "SimulationRun"."completedAt"
+FROM "SimulationRun"
+WHERE "SimulationRun"."id" = $1;
+
+-- R13 -- READ
+-- Purpose: Get scenario for a run (with disruptions ordered by startStep).
+-- Source: simulationRepository.getRun(id) -> scenario.disruptions include
+-- Parameter: $1 = runId (TEXT)
+SELECT "Scenario"."id",
+       "Scenario"."supplyChainId",
+       "Scenario"."name",
+       "Scenario"."createdAt"
+FROM "Scenario"
+JOIN "SimulationRun" ON "SimulationRun"."scenarioId" = "Scenario"."id"
+WHERE "SimulationRun"."id" = $1;
+
+-- R14 -- READ
+-- Purpose: Get disruptions for a run's scenario ordered by startStep.
+-- Source: simulationRepository.getRun(id) -> scenario.disruptions include
+-- Parameter: $1 = runId (TEXT)
+SELECT "Disruption"."id",
+       "Disruption"."scenarioId",
+       "Disruption"."type",
+       "Disruption"."targetId",
+       "Disruption"."startStep",
+       "Disruption"."duration"
+FROM "Disruption"
+JOIN "SimulationRun" ON "SimulationRun"."scenarioId" = "Disruption"."scenarioId"
+WHERE "SimulationRun"."id" = $1
+ORDER BY "Disruption"."startStep" ASC;
+
+-- R15 -- READ
+-- Purpose: Get simulation events for a run ordered by step then sequence.
+-- Source: simulationRepository.getRun(id) -> events include
+-- Parameter: $1 = runId (TEXT)
+SELECT "SimulationEvent"."id",
+       "SimulationEvent"."runId",
+       "SimulationEvent"."sequence",
+       "SimulationEvent"."step",
+       "SimulationEvent"."type",
+       "SimulationEvent"."targetType",
+       "SimulationEvent"."targetId",
+       "SimulationEvent"."message"
+FROM "SimulationEvent"
+WHERE "SimulationEvent"."runId" = $1
+ORDER BY "SimulationEvent"."step" ASC, "SimulationEvent"."sequence" ASC;
+
+-- R16 -- READ
+-- Purpose: Get simulation metrics for a run.
+-- Source: simulationRepository.getRun(id) -> metrics include
+-- Parameter: $1 = runId (TEXT)
+SELECT "SimulationMetric"."id",
+       "SimulationMetric"."runId",
+       "SimulationMetric"."totalOrders",
+       "SimulationMetric"."totalDemand",
+       "SimulationMetric"."fulfilledQuantity",
+       "SimulationMetric"."remainingQuantity",
+       "SimulationMetric"."stockoutEvents",
+       "SimulationMetric"."stockouts",
+       "SimulationMetric"."delayedOrders",
+       "SimulationMetric"."additionalCost",
+       "SimulationMetric"."recoveryTime",
+       "SimulationMetric"."affectedNodes",
+       "SimulationMetric"."affectedEdges",
+       "SimulationMetric"."finalState"
+FROM "SimulationMetric"
+WHERE "SimulationMetric"."runId" = $1;
+
+-- R17 -- READ
+-- Purpose: List simulation runs by supplyChainId (via Scenario) with optional status filter,
+-- using cursor-based pagination (keyset on startedAt, id).
+-- Source: Application API endpoint (not directly in reviewed files; inferred from
+-- simulationService.startSimulation creating runs and the need to list them by supply chain).
+-- The application filters through Scenario.supplyChainId, not by scenarioId directly.
+-- Parameters: $1 = supplyChainId (TEXT), $2 = status (TEXT, optional), $3 = cursor_startedAt (TIMESTAMPTZ, optional), $4 = cursor_id (TEXT, optional), $5 = limit (INTEGER)
+-- Cursor condition: (startedAt, id) < (cursor_startedAt, cursor_id) for "next page" with DESC ordering.
+SELECT "SimulationRun"."id",
+       "SimulationRun"."scenarioId",
+       "SimulationRun"."status",
+       "SimulationRun"."totalSteps",
+       "SimulationRun"."startedAt",
+       "SimulationRun"."completedAt",
+       "Scenario"."supplyChainId",
+       "Scenario"."name" AS scenario_name
+FROM "SimulationRun"
+JOIN "Scenario" ON "Scenario"."id" = "SimulationRun"."scenarioId"
+WHERE "Scenario"."supplyChainId" = $1
+  AND ($2::TEXT IS NULL OR "SimulationRun"."status" = $2)
+  AND (
+        $3::TIMESTAMPTZ IS NULL
+     OR "SimulationRun"."startedAt" < $3
+     OR ("SimulationRun"."startedAt" = $3 AND "SimulationRun"."id" < $4::TEXT)
+      )
+ORDER BY "SimulationRun"."startedAt" DESC, "SimulationRun"."id" DESC
+LIMIT $5;
+
+-- R18 -- READ
+-- Purpose: Get the first page of runs for a supply chain (no cursor).
+-- Special case of R17 with no cursor parameters.
+-- Parameters: $1 = supplyChainId (TEXT), $2 = status (TEXT, optional), $3 = limit (INTEGER)
+SELECT "SimulationRun"."id",
+       "SimulationRun"."scenarioId",
+       "SimulationRun"."status",
+       "SimulationRun"."totalSteps",
+       "SimulationRun"."startedAt",
+       "SimulationRun"."completedAt",
+       "Scenario"."supplyChainId",
+       "Scenario"."name" AS scenario_name
+FROM "SimulationRun"
+JOIN "Scenario" ON "Scenario"."id" = "SimulationRun"."scenarioId"
+WHERE "Scenario"."supplyChainId" = $1
+  AND ($2::TEXT IS NULL OR "SimulationRun"."status" = $2)
+ORDER BY "SimulationRun"."startedAt" DESC, "SimulationRun"."id" DESC
+LIMIT $3;
+
 COMMIT;
 
 -- =====================================================================
