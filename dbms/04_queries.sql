@@ -458,3 +458,95 @@ UPDATE "Order"
 SET "status" = $2
 WHERE "id" = $1
 RETURNING "id", "nodeId", "status", "dueStep";
+
+
+
+-- @W009
+-- Type: WRITE
+-- Category: Simulation
+-- Purpose: Create a scenario for a supply chain.
+-- Parameters: $1 = id, $2 = supplyChainId, $3 = name
+INSERT INTO "Scenario" ("id", "supplyChainId", "name")
+VALUES ($1, $2, $3)
+RETURNING "id", "supplyChainId", "name", "createdAt";
+
+
+-- @W010
+-- Type: WRITE
+-- Category: Simulation
+-- Purpose: Add a disruption to a scenario.
+-- Parameters: $1 = id, $2 = scenarioId, $3 = type, $4 = targetId, $5 = startStep, $6 = duration
+INSERT INTO "Disruption"
+("id", "scenarioId", "type", "targetId", "startStep", "duration")
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING *;
+
+
+-- @W011
+-- Type: WRITE
+-- Category: Simulation
+-- Purpose: Create a simulation run for a scenario.
+-- Parameters: $1 = id, $2 = scenarioId, $3 = totalSteps
+INSERT INTO "SimulationRun" ("id", "scenarioId", "totalSteps")
+VALUES ($1, $2, $3)
+RETURNING *;
+
+
+-- @W012
+-- Type: WRITE
+-- Category: Simulation
+-- Purpose: Update the status and completion time of a simulation run.
+-- Parameters: $1 = runId, $2 = status, $3 = completedAt
+UPDATE "SimulationRun"
+SET "status" = $2,
+    "completedAt" = $3
+WHERE "id" = $1
+RETURNING *;
+
+
+-- @W013
+-- Type: WRITE
+-- Category: Simulation
+-- Purpose: Record an event for a simulation run.
+-- Parameters: $1 = id, $2 = runId, $3 = sequence, $4 = step, $5 = type, $6 = targetType, $7 = targetId, $8 = message
+INSERT INTO "SimulationEvent"
+("id", "runId", "sequence", "step", "type", "targetType", "targetId", "message")
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING *;
+
+
+-- @W014
+-- Type: WRITE
+-- Category: Simulation
+-- Purpose: Insert or update metrics for a simulation run.
+-- Parameters: $1 = id, $2 = runId, $3 = totalOrders, $4 = totalDemand, $5 = fulfilledQuantity, $6 = remainingQuantity, $7 = stockoutEvents, $8 = stockouts, $9 = delayedOrders, $10 = recoveryTime, $11 = additionalCost, $12 = affectedNodes, $13 = affectedEdges, $14 = finalState
+INSERT INTO "SimulationMetric"
+("id", "runId", "totalOrders", "totalDemand", "fulfilledQuantity",
+ "remainingQuantity", "stockoutEvents", "stockouts", "delayedOrders",
+ "recoveryTime", "additionalCost", "affectedNodes", "affectedEdges", "finalState")
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+ON CONFLICT ("runId")
+DO UPDATE SET
+    "totalOrders" = EXCLUDED."totalOrders",
+    "totalDemand" = EXCLUDED."totalDemand",
+    "fulfilledQuantity" = EXCLUDED."fulfilledQuantity",
+    "remainingQuantity" = EXCLUDED."remainingQuantity",
+    "stockoutEvents" = EXCLUDED."stockoutEvents",
+    "stockouts" = EXCLUDED."stockouts",
+    "delayedOrders" = EXCLUDED."delayedOrders",
+    "recoveryTime" = EXCLUDED."recoveryTime",
+    "additionalCost" = EXCLUDED."additionalCost",
+    "affectedNodes" = EXCLUDED."affectedNodes",
+    "affectedEdges" = EXCLUDED."affectedEdges",
+    "finalState" = EXCLUDED."finalState"
+RETURNING *;
+
+
+-- @W015
+-- Type: WRITE
+-- Category: Simulation
+-- Purpose: Delete a disruption from a scenario.
+-- Parameters: $1 = disruptionId
+DELETE FROM "Disruption"
+WHERE "id" = $1
+RETURNING *;
