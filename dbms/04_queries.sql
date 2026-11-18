@@ -339,6 +339,97 @@ WHERE "Scenario"."supplyChainId" = $1
 ORDER BY "SimulationRun"."startedAt" DESC, "SimulationRun"."id" DESC
 LIMIT $3;
 
+-- =====================================================================
+-- WRITE queries — Simulation scenario, disruption, run, and result operations
+-- =====================================================================
+
+-- W08 -- WRITE
+-- Purpose: Create a new scenario with disruptions.
+-- Source: simulationRepository.createScenario({ supplyChainId, name, disruptions })
+-- Called by: simulationService.startSimulation()
+-- Parameters: $1 = id (TEXT), $2 = supplyChainId (TEXT), $3 = name (TEXT), $4 = createdAt (TIMESTAMPTZ, optional, defaults to now)
+-- Disruptions are inserted separately via W09.
+INSERT INTO "Scenario" ("id", "supplyChainId", "name", "createdAt")
+VALUES ($1, $2, $3, COALESCE($4, CURRENT_TIMESTAMP));
+
+-- W09 -- WRITE
+-- Purpose: Create a disruption for a scenario.
+-- Source: simulationRepository.createScenario() -> disruptions create mapping
+-- Parameters: $1 = id (TEXT), $2 = scenarioId (TEXT), $3 = type (TEXT), $4 = targetId (TEXT), $5 = startStep (INTEGER), $6 = duration (INTEGER)
+INSERT INTO "Disruption" ("id", "scenarioId", "type", "targetId", "startStep", "duration")
+VALUES ($1, $2, $3, $4, $5, $6);
+
+-- W10 -- WRITE
+-- Purpose: Create a new simulation run.
+-- Source: simulationRepository.createRun({ id, scenarioId, totalSteps })
+-- Called by: simulationService.startSimulation()
+-- Parameters: $1 = id (TEXT), $2 = scenarioId (TEXT), $3 = totalSteps (INTEGER), $4 = status (TEXT, default 'RUNNING'), $5 = startedAt (TIMESTAMPTZ, optional, defaults to now)
+INSERT INTO "SimulationRun" ("id", "scenarioId", "totalSteps", "status", "startedAt")
+VALUES ($1, $2, $3, COALESCE($4, 'RUNNING'), COALESCE($5, CURRENT_TIMESTAMP));
+
+-- W11 -- WRITE
+-- Purpose: Delete all previous events for a run before saving replacement events.
+-- Source: simulationRepository.saveRunResult() -> tx.simulationEvent.deleteMany({ where: { runId } })
+-- Called by: simulationService.startSimulation() after simulation completes
+-- Parameter: $1 = runId (TEXT)
+DELETE FROM "SimulationEvent"
+WHERE "runId" = $1;
+
+-- W12 -- WRITE
+-- Purpose: Insert simulation events for a run (bulk insert with sequence).
+-- Source: simulationRepository.saveRunResult() -> tx.simulationEvent.createMany()
+-- Called by: simulationService.startSimulation() after simulation completes
+-- Parameters (per event): $1 = id (TEXT), $2 = runId (TEXT), $3 = sequence (INTEGER), $4 = step (INTEGER), $5 = type (TEXT), $6 = targetType (TEXT), $7 = targetId (TEXT), $8 = message (TEXT)
+-- The application generates IDs and sequences in JavaScript before inserting.
+INSERT INTO "SimulationEvent" ("id", "runId", "sequence", "step", "type", "targetType", "targetId", "message")
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+
+-- W13 -- WRITE
+-- Purpose: Upsert simulation metrics for a run (create or update).
+-- Source: simulationRepository.saveRunResult() -> tx.simulationMetric.upsert({ where: { runId }, update: ..., create: ... })
+-- Called by: simulationService.startSimulation() after simulation completes
+-- Parameters: $1 = id (TEXT), $2 = runId (TEXT), $3 = totalOrders (INTEGER), $4 = totalDemand (INTEGER),
+-- $5 = fulfilledQuantity (INTEGER), $6 = remainingQuantity (INTEGER), $7 = stockoutEvents (INTEGER),
+-- $8 = stockouts (INTEGER), $9 = delayedOrders (INTEGER), $10 = additionalCost (DOUBLE PRECISION),
+-- $11 = recoveryTime (INTEGER), $12 = affectedNodes (JSONB), $13 = affectedEdges (JSONB), $14 = finalState (JSONB, optional)
+INSERT INTO "SimulationMetric" ("id", "runId", "totalOrders", "totalDemand", "fulfilledQuantity", "remainingQuantity",
+                                "stockoutEvents", "stockouts", "delayedOrders", "additionalCost", "recoveryTime",
+                                "affectedNodes", "affectedEdges", "finalState")
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+ON CONFLICT ("runId") DO UPDATE SET
+    "totalOrders"       = EXCLUDED."totalOrders",
+    "totalDemand"       = EXCLUDED."totalDemand",
+    "fulfilledQuantity" = EXCLUDED."fulfilledQuantity",
+    "remainingQuantity" = EXCLUDED."remainingQuantity",
+    "stockoutEvents"    = EXCLUDED."stockoutEvents",
+    "stockouts"         = EXCLUDED."stockouts",
+    "delayedOrders"     = EXCLUDED."delayedOrders",
+    "additionalCost"    = EXCLUDED."additionalCost",
+    "recoveryTime"      = EXCLUDED."recoveryTime",
+    "affectedNodes"     = EXCLUDED."affectedNodes",
+    "affectedEdges"     = EXCLUDED."affectedEdges",
+    "finalState"        = EXCLUDED."finalState";
+
+-- W14 -- WRITE
+-- Purpose: Mark a simulation run as completed with completedAt timestamp.
+-- Source: simulationRepository.saveRunResult() -> tx.simulationRun.update({ where: { id: runId }, data: { status: ..., completedAt: new Date() } })
+-- Called by: simulationService.startSimulation() on successful completion
+-- Parameters: $1 = runId (TEXT), $2 = status (TEXT, 'COMPLETED' or 'FAILED'), $3 = completedAt (TIMESTAMPTZ, optional, defaults to now)
+UPDATE "SimulationRun"
+SET "status" = $2,
+    "completedAt" = COALESCE($3, CURRENT_TIMESTAMP)
+WHERE "id" = $1;
+
+-- W15 -- WRITE
+-- Purpose: Mark a simulation run as failed (alternative path when simulation throws).
+-- Source: simulationRepository.markRunFailed(runId)
+-- Called by: simulationService.startSimulation() catch block
+-- Parameter: $1 = runId (TEXT), $2 = completedAt (TIMESTAMPTZ, optional, defaults to now)
+UPDATE "SimulationRun"
+SET "status" = 'FAILED',
+    "completedAt" = COALESCE($2, CURRENT_TIMESTAMP)
+WHERE "id" = $1;
+
 COMMIT;
 
 -- =====================================================================
