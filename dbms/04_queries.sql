@@ -159,3 +159,214 @@ FROM "Order"
 WHERE "nodeId" = $1
   AND "status" = 'PENDING'
 ORDER BY "dueStep" ASC, "createdAt" ASC;
+
+-- @Q010
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve all scenarios belonging to a supply chain.
+-- Parameters: $1 = supplyChainId
+
+SELECT
+    "id",
+    "supplyChainId",
+    "name",
+    "createdAt"
+FROM "Scenario"
+WHERE "supplyChainId" = $1
+ORDER BY "createdAt" DESC;
+
+
+-- @Q011
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve all disruptions configured for a scenario.
+-- Parameters: $1 = scenarioId
+
+SELECT
+    "id",
+    "scenarioId",
+    "type",
+    "targetId",
+    "startStep",
+    "duration"
+FROM "Disruption"
+WHERE "scenarioId" = $1
+ORDER BY "startStep" ASC;
+
+
+
+-- @Q012
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve all simulation runs for a scenario, newest first.
+-- Parameters: $1 = scenarioId
+
+SELECT
+    "id",
+    "scenarioId",
+    "status",
+    "totalSteps",
+    "startedAt",
+    "completedAt"
+FROM "SimulationRun"
+WHERE "scenarioId" = $1
+ORDER BY "startedAt" DESC;
+
+
+-- @Q013
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve events for a simulation run in sequence order.
+-- Parameters: $1 = runId
+
+SELECT
+    "id",
+    "runId",
+    "sequence",
+    "step",
+    "type",
+    "targetType",
+    "targetId",
+    "message"
+FROM "SimulationEvent"
+WHERE "runId" = $1
+ORDER BY "sequence" ASC;
+
+
+-- @Q014
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve events of a specific type within a simulation step range.
+-- Parameters: $1 = runId, $2 = eventType, $3 = startStep, $4 = endStep
+
+SELECT
+    "id",
+    "runId",
+    "sequence",
+    "step",
+    "type",
+    "targetType",
+    "targetId",
+    "message"
+FROM "SimulationEvent"
+WHERE "runId" = $1
+  AND "type" = $2
+  AND "step" BETWEEN $3 AND $4
+ORDER BY "step" ASC, "sequence" ASC;
+
+
+-- @Q015
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve simulation metrics for a specific run.
+-- Parameters: $1 = runId
+
+SELECT
+    "runId",
+    "totalOrders",
+    "totalDemand",
+    "fulfilledQuantity",
+    "remainingQuantity",
+    "stockoutEvents",
+    "stockouts",
+    "delayedOrders",
+    "recoveryTime",
+    "additionalCost",
+    "affectedNodes",
+    "affectedEdges",
+    "finalState"
+FROM "SimulationMetric"
+WHERE "runId" = $1;
+
+
+-- @Q016
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve simulation events for a specific target.
+-- Parameters: $1 = runId, $2 = targetType, $3 = targetId
+
+SELECT
+    "id",
+    "sequence",
+    "step",
+    "type",
+    "targetType",
+    "targetId",
+    "message"
+FROM "SimulationEvent"
+WHERE "runId" = $1
+  AND "targetType" = $2
+  AND "targetId" = $3
+ORDER BY "step" ASC, "sequence" ASC;
+
+
+-- @Q017
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve events with pagination for a simulation run.
+-- Parameters: $1 = runId, $2 = pageSize, $3 = offset
+
+SELECT
+    "id",
+    "sequence",
+    "step",
+    "type",
+    "targetType",
+    "targetId",
+    "message"
+FROM "SimulationEvent"
+WHERE "runId" = $1
+ORDER BY "sequence" ASC
+LIMIT $2
+OFFSET $3;
+
+
+-- @Q018
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Count simulation events grouped by event type.
+-- Parameters: $1 = runId
+
+SELECT
+    "type",
+    COUNT(*) AS "eventCount"
+FROM "SimulationEvent"
+WHERE "runId" = $1
+GROUP BY "type"
+ORDER BY "eventCount" DESC, "type" ASC;
+
+
+-- @Q019
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve event counts grouped by simulation step.
+-- Parameters: $1 = runId
+
+SELECT
+    "step",
+    COUNT(*) AS "eventCount"
+FROM "SimulationEvent"
+WHERE "runId" = $1
+GROUP BY "step"
+ORDER BY "step" ASC;
+
+
+-- @Q020
+-- Type: READ
+-- Category: Simulation
+-- Purpose: Retrieve simulation runs filtered by status with pagination.
+-- Parameters: $1 = scenarioId, $2 = status, $3 = pageSize, $4 = offset
+
+SELECT
+    "id",
+    "scenarioId",
+    "status",
+    "totalSteps",
+    "startedAt",
+    "completedAt"
+FROM "SimulationRun"
+WHERE "scenarioId" = $1
+  AND "status" = $2
+ORDER BY "startedAt" DESC
+LIMIT $3
+OFFSET $4;
