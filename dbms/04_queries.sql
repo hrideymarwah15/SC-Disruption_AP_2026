@@ -370,3 +370,91 @@ WHERE "scenarioId" = $1
 ORDER BY "startedAt" DESC
 LIMIT $3
 OFFSET $4;
+
+
+
+-- @W001
+-- Type: WRITE
+-- Category: Graph
+-- Purpose: Create a directed edge between two nodes.
+-- Parameters: $1 = id, $2 = fromNodeId, $3 = toNodeId, $4 = distance, $5 = travelTime
+INSERT INTO "Edge" ("id", "fromNodeId", "toNodeId", "distance", "travelTime")
+VALUES ($1, $2, $3, $4, $5)
+RETURNING "id", "fromNodeId", "toNodeId", "distance", "travelTime";
+
+
+-- @W002
+-- Type: WRITE
+-- Category: Graph
+-- Purpose: Update the distance and travel time of an edge.
+-- Parameters: $1 = edgeId, $2 = distance, $3 = travelTime
+UPDATE "Edge"
+SET "distance" = $2,
+    "travelTime" = $3
+WHERE "id" = $1
+RETURNING "id", "fromNodeId", "toNodeId", "distance", "travelTime";
+
+
+-- @W003
+-- Type: WRITE
+-- Category: Graph
+-- Purpose: Delete an edge between two nodes.
+-- Parameters: $1 = edgeId
+DELETE FROM "Edge"
+WHERE "id" = $1
+RETURNING "id", "fromNodeId", "toNodeId";
+
+
+-- @W004
+-- Type: WRITE
+-- Category: Inventory
+-- Purpose: Add inventory for a node and product or update existing inventory.
+-- Parameters: $1 = id, $2 = nodeId, $3 = productId, $4 = quantity
+INSERT INTO "Inventory" ("id", "nodeId", "productId", "quantity")
+VALUES ($1, $2, $3, $4)
+ON CONFLICT ("nodeId", "productId")
+DO UPDATE SET "quantity" = EXCLUDED."quantity"
+RETURNING "id", "nodeId", "productId", "quantity";
+
+
+-- @W005
+-- Type: WRITE
+-- Category: Inventory
+-- Purpose: Adjust inventory quantity while preventing negative stock.
+-- Parameters: $1 = inventoryId, $2 = quantityChange
+UPDATE "Inventory"
+SET "quantity" = "quantity" + $2
+WHERE "id" = $1
+  AND "quantity" + $2 >= 0
+RETURNING "id", "nodeId", "productId", "quantity";
+
+
+-- @W006
+-- Type: WRITE
+-- Category: Order
+-- Purpose: Create a new order for a node.
+-- Parameters: $1 = id, $2 = nodeId, $3 = dueStep
+INSERT INTO "Order" ("id", "nodeId", "dueStep")
+VALUES ($1, $2, $3)
+RETURNING "id", "nodeId", "status", "dueStep", "createdAt";
+
+
+-- @W007
+-- Type: WRITE
+-- Category: Order
+-- Purpose: Add a product item to an existing order.
+-- Parameters: $1 = id, $2 = orderId, $3 = productId, $4 = quantity
+INSERT INTO "OrderItem" ("id", "orderId", "productId", "quantity")
+VALUES ($1, $2, $3, $4)
+RETURNING "id", "orderId", "productId", "quantity";
+
+
+-- @W008
+-- Type: WRITE
+-- Category: Order
+-- Purpose: Update the status of an existing order.
+-- Parameters: $1 = orderId, $2 = newStatus
+UPDATE "Order"
+SET "status" = $2
+WHERE "id" = $1
+RETURNING "id", "nodeId", "status", "dueStep";
