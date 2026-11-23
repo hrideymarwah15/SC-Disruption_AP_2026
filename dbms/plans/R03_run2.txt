@@ -1,0 +1,16 @@
+                                                 QUERY PLAN                                                  
+-------------------------------------------------------------------------------------------------------------
+ Sort  (cost=16.52..16.53 rows=3 width=128) (actual time=0.024..0.024 rows=15.00 loops=1)
+   Sort Key: id
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=4
+   ->  Seq Scan on "Node"  (cost=0.00..16.50 rows=3 width=128) (actual time=0.004..0.006 rows=15.00 loops=1)
+         Filter: ("supplyChainId" = 'sc_01'::text)
+         Rows Removed by Filter: 35
+         Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=73
+ Planning Time: 0.162 ms
+ Execution Time: 0.041 ms
+(12 rows)
+

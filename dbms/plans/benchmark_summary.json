@@ -1,0 +1,680 @@
+[
+  {
+    "id": "R01",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R01_run1.txt",
+        "execution_time_ms": 0.104
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R01_run2.txt",
+        "execution_time_ms": 0.083
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R01_run3.txt",
+        "execution_time_ms": 0.077
+      }
+    ]
+  },
+  {
+    "id": "R02",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R02_run1.txt",
+        "execution_time_ms": 0.023
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R02_run2.txt",
+        "execution_time_ms": 0.034
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R02_run3.txt",
+        "execution_time_ms": 0.023
+      }
+    ]
+  },
+  {
+    "id": "R03",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R03_run1.txt",
+        "execution_time_ms": 0.138
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R03_run2.txt",
+        "execution_time_ms": 0.041
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R03_run3.txt",
+        "execution_time_ms": 0.041
+      }
+    ]
+  },
+  {
+    "id": "R04",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R04_run1.txt",
+        "execution_time_ms": 0.068
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R04_run2.txt",
+        "execution_time_ms": 0.061
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R04_run3.txt",
+        "execution_time_ms": 0.06
+      }
+    ]
+  },
+  {
+    "id": "R05",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R05_run1.txt",
+        "execution_time_ms": 0.084
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R05_run2.txt",
+        "execution_time_ms": 0.083
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R05_run3.txt",
+        "execution_time_ms": 0.08
+      }
+    ]
+  },
+  {
+    "id": "R06",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R06_run1.txt",
+        "execution_time_ms": 0.095
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R06_run2.txt",
+        "execution_time_ms": 0.095
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R06_run3.txt",
+        "execution_time_ms": 0.094
+      }
+    ]
+  },
+  {
+    "id": "R07",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R07_run1.txt",
+        "execution_time_ms": 0.029
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R07_run2.txt",
+        "execution_time_ms": 0.027
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R07_run3.txt",
+        "execution_time_ms": 0.025
+      }
+    ]
+  },
+  {
+    "id": "R08",
+    "type": "READ",
+    "runs": [],
+    "skipped": true
+  },
+  {
+    "id": "W01",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W01_run1.txt",
+        "execution_time_ms": 0.086
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W01_run2.txt",
+        "execution_time_ms": 0.078
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W01_run3.txt",
+        "execution_time_ms": 0.083
+      }
+    ]
+  },
+  {
+    "id": "W02",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W02_run1.txt",
+        "execution_time_ms": 0.332
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W02_run2.txt",
+        "execution_time_ms": 0.316
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W02_run3.txt",
+        "execution_time_ms": 0.29
+      }
+    ]
+  },
+  {
+    "id": "W03",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W03_run1.txt",
+        "execution_time_ms": 0.313
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W03_run2.txt",
+        "execution_time_ms": 0.325
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W03_run3.txt",
+        "execution_time_ms": 0.311
+      }
+    ]
+  },
+  {
+    "id": "W04",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W04_run1.txt",
+        "execution_time_ms": 0.199
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W04_run2.txt",
+        "execution_time_ms": 0.094
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W04_run3.txt",
+        "execution_time_ms": 0.094
+      }
+    ]
+  },
+  {
+    "id": "W05",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W05_run1.txt",
+        "execution_time_ms": 0.298
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W05_run2.txt",
+        "execution_time_ms": 0.126
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W05_run3.txt",
+        "execution_time_ms": 0.106
+      }
+    ]
+  },
+  {
+    "id": "W06",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W06_run1.txt",
+        "execution_time_ms": 0.279
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W06_run2.txt",
+        "execution_time_ms": 0.285
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W06_run3.txt",
+        "execution_time_ms": 0.288
+      }
+    ]
+  },
+  {
+    "id": "W07",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W07_run1.txt",
+        "execution_time_ms": 0.393
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W07_run2.txt",
+        "execution_time_ms": 0.423
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W07_run3.txt",
+        "execution_time_ms": 0.61
+      }
+    ]
+  },
+  {
+    "id": "R09",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R09_run1.txt",
+        "execution_time_ms": 0.025
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R09_run2.txt",
+        "execution_time_ms": 0.019
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R09_run3.txt",
+        "execution_time_ms": 0.019
+      }
+    ]
+  },
+  {
+    "id": "R10",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R10_run1.txt",
+        "execution_time_ms": 0.038
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R10_run2.txt",
+        "execution_time_ms": 0.035
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R10_run3.txt",
+        "execution_time_ms": 0.04
+      }
+    ]
+  },
+  {
+    "id": "R11",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R11_run1.txt",
+        "execution_time_ms": 0.038
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R11_run2.txt",
+        "execution_time_ms": 0.035
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R11_run3.txt",
+        "execution_time_ms": 0.034
+      }
+    ]
+  },
+  {
+    "id": "R12",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R12_run1.txt",
+        "execution_time_ms": 0.019
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R12_run2.txt",
+        "execution_time_ms": 0.02
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R12_run3.txt",
+        "execution_time_ms": 0.02
+      }
+    ]
+  },
+  {
+    "id": "R13",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R13_run1.txt",
+        "execution_time_ms": 0.027
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R13_run2.txt",
+        "execution_time_ms": 0.024
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R13_run3.txt",
+        "execution_time_ms": 0.023
+      }
+    ]
+  },
+  {
+    "id": "R14",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R14_run1.txt",
+        "execution_time_ms": 0.041
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R14_run2.txt",
+        "execution_time_ms": 0.037
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R14_run3.txt",
+        "execution_time_ms": 0.039
+      }
+    ]
+  },
+  {
+    "id": "R15",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R15_run1.txt",
+        "execution_time_ms": 0.043
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R15_run2.txt",
+        "execution_time_ms": 0.04
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R15_run3.txt",
+        "execution_time_ms": 0.054
+      }
+    ]
+  },
+  {
+    "id": "R16",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R16_run1.txt",
+        "execution_time_ms": 0.023
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R16_run2.txt",
+        "execution_time_ms": 0.02
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R16_run3.txt",
+        "execution_time_ms": 0.018
+      }
+    ]
+  },
+  {
+    "id": "R17",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R17_run1.txt",
+        "execution_time_ms": 0.061
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R17_run2.txt",
+        "execution_time_ms": 0.048
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R17_run3.txt",
+        "execution_time_ms": 0.072
+      }
+    ]
+  },
+  {
+    "id": "R18",
+    "type": "READ",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/R18_run1.txt",
+        "execution_time_ms": 0.046
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/R18_run2.txt",
+        "execution_time_ms": 0.048
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/R18_run3.txt",
+        "execution_time_ms": 0.045
+      }
+    ]
+  },
+  {
+    "id": "W08",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W08_run1.txt",
+        "execution_time_ms": 0.311
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W08_run2.txt",
+        "execution_time_ms": 0.274
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W08_run3.txt",
+        "execution_time_ms": 0.27
+      }
+    ]
+  },
+  {
+    "id": "W09",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W09_run1.txt",
+        "execution_time_ms": 0.336
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W09_run2.txt",
+        "execution_time_ms": 0.351
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W09_run3.txt",
+        "execution_time_ms": 0.328
+      }
+    ]
+  },
+  {
+    "id": "W10",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W10_run1.txt",
+        "execution_time_ms": 0.315
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W10_run2.txt",
+        "execution_time_ms": 0.341
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W10_run3.txt",
+        "execution_time_ms": 0.309
+      }
+    ]
+  },
+  {
+    "id": "W11",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W11_run1.txt",
+        "execution_time_ms": 0.07
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W11_run2.txt",
+        "execution_time_ms": 0.089
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W11_run3.txt",
+        "execution_time_ms": 0.068
+      }
+    ]
+  },
+  {
+    "id": "W12",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W12_run1.txt",
+        "execution_time_ms": 0.369
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W12_run2.txt",
+        "execution_time_ms": 0.343
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W12_run3.txt",
+        "execution_time_ms": 0.373
+      }
+    ]
+  },
+  {
+    "id": "W13",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W13_run1.txt",
+        "execution_time_ms": 0.118
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W13_run2.txt",
+        "execution_time_ms": 0.114
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W13_run3.txt",
+        "execution_time_ms": 0.11
+      }
+    ]
+  },
+  {
+    "id": "W14",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W14_run1.txt",
+        "execution_time_ms": 0.131
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W14_run2.txt",
+        "execution_time_ms": 0.109
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W14_run3.txt",
+        "execution_time_ms": 0.097
+      }
+    ]
+  },
+  {
+    "id": "W15",
+    "type": "WRITE",
+    "runs": [
+      {
+        "run": 1,
+        "plan_file": "dbms/plans/W15_run1.txt",
+        "execution_time_ms": 0.099
+      },
+      {
+        "run": 2,
+        "plan_file": "dbms/plans/W15_run2.txt",
+        "execution_time_ms": 0.142
+      },
+      {
+        "run": 3,
+        "plan_file": "dbms/plans/W15_run3.txt",
+        "execution_time_ms": 0.1
+      }
+    ]
+  }
+]

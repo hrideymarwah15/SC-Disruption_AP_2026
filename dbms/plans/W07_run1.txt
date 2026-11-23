@@ -1,0 +1,13 @@
+                                              QUERY PLAN                                              
+------------------------------------------------------------------------------------------------------
+ Insert on "OrderItem"  (cost=0.00..0.01 rows=0 width=0) (actual time=0.084..0.084 rows=0.00 loops=1)
+   Buffers: shared hit=53
+   ->  Result  (cost=0.00..0.01 rows=1 width=100) (actual time=0.001..0.001 rows=1.00 loops=1)
+ Planning:
+   Buffers: shared hit=3
+ Planning Time: 0.022 ms
+ Trigger for constraint OrderItem_orderId_fkey: time=0.201 calls=1
+ Trigger for constraint OrderItem_productId_fkey: time=0.093 calls=1
+ Execution Time: 0.393 ms
+(9 rows)
+

@@ -1,0 +1,12 @@
+                                              QUERY PLAN                                               
+-------------------------------------------------------------------------------------------------------
+ Insert on "Disruption"  (cost=0.00..0.01 rows=0 width=0) (actual time=0.089..0.090 rows=0.00 loops=1)
+   Buffers: shared hit=62
+   ->  Result  (cost=0.00..0.01 rows=1 width=136) (actual time=0.001..0.001 rows=1.00 loops=1)
+ Planning:
+   Buffers: shared hit=3
+ Planning Time: 0.022 ms
+ Trigger for constraint Disruption_scenarioId_fkey: time=0.246 calls=1
+ Execution Time: 0.351 ms
+(8 rows)
+

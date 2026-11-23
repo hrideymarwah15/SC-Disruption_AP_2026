@@ -1,0 +1,15 @@
+                                              QUERY PLAN                                              
+------------------------------------------------------------------------------------------------------
+ Insert on "Inventory"  (cost=0.00..0.01 rows=0 width=0) (actual time=0.077..0.077 rows=0.00 loops=1)
+   Conflict Resolution: UPDATE
+   Conflict Arbiter Indexes: Inventory_nodeId_productId_key
+   Tuples Inserted: 0
+   Conflicting Tuples: 1
+   Buffers: shared hit=23
+   ->  Result  (cost=0.00..0.01 rows=1 width=100) (actual time=0.002..0.002 rows=1.00 loops=1)
+ Planning:
+   Buffers: shared hit=47
+ Planning Time: 0.047 ms
+ Execution Time: 0.126 ms
+(11 rows)
+

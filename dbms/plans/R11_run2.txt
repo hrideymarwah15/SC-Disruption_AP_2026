@@ -1,0 +1,20 @@
+                                                                        QUERY PLAN                                                                        
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=11.31..11.31 rows=3 width=116) (actual time=0.017..0.018 rows=4.00 loops=1)
+   Sort Key: "startedAt" DESC
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=5
+   ->  Bitmap Heap Scan on "SimulationRun"  (cost=4.17..11.28 rows=3 width=116) (actual time=0.007..0.008 rows=4.00 loops=1)
+         Recheck Cond: ("scenarioId" = 'scn_01'::text)
+         Heap Blocks: exact=1
+         Buffers: shared hit=2
+         ->  Bitmap Index Scan on "SimulationRun_scenarioId_startedAt_idx"  (cost=0.00..4.17 rows=3 width=0) (actual time=0.004..0.004 rows=4.00 loops=1)
+               Index Cond: ("scenarioId" = 'scn_01'::text)
+               Index Searches: 1
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=111
+ Planning Time: 0.165 ms
+ Execution Time: 0.035 ms
+(16 rows)
+

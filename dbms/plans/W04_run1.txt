@@ -1,0 +1,9 @@
+                                             QUERY PLAN                                             
+----------------------------------------------------------------------------------------------------
+ Insert on "Product"  (cost=0.00..0.02 rows=0 width=0) (actual time=0.180..0.180 rows=0.00 loops=1)
+   Buffers: shared hit=46
+   ->  Result  (cost=0.00..0.02 rows=1 width=104) (actual time=0.006..0.006 rows=1.00 loops=1)
+ Planning Time: 0.028 ms
+ Execution Time: 0.199 ms
+(5 rows)
+

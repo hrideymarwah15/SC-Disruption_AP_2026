@@ -1,0 +1,12 @@
+                                                QUERY PLAN                                                
+----------------------------------------------------------------------------------------------------------
+ Insert on "SimulationRun"  (cost=0.00..0.02 rows=0 width=0) (actual time=0.095..0.096 rows=0.00 loops=1)
+   Buffers: shared hit=60
+   ->  Result  (cost=0.00..0.02 rows=1 width=116) (actual time=0.005..0.006 rows=1.00 loops=1)
+ Planning:
+   Buffers: shared hit=3
+ Planning Time: 0.026 ms
+ Trigger for constraint SimulationRun_scenarioId_fkey: time=0.203 calls=1
+ Execution Time: 0.315 ms
+(8 rows)
+

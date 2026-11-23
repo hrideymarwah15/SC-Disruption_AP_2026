@@ -1,0 +1,26 @@
+                                                              QUERY PLAN                                                              
+--------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=96.08..98.11 rows=810 width=80) (actual time=0.056..0.057 rows=3.00 loops=1)
+   Sort Key: "SupplyChain"."createdAt" DESC
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=5
+   ->  HashAggregate  (cost=48.85..56.95 rows=810 width=80) (actual time=0.045..0.047 rows=3.00 loops=1)
+         Group Key: "SupplyChain".id
+         Batches: 1  Memory Usage: 49kB
+         Buffers: shared hit=2
+         ->  Hash Right Join  (cost=28.23..44.80 rows=810 width=104) (actual time=0.029..0.037 rows=50.00 loops=1)
+               Hash Cond: ("Node"."supplyChainId" = "SupplyChain".id)
+               Buffers: shared hit=2
+               ->  Seq Scan on "Node"  (cost=0.00..15.20 rows=520 width=64) (actual time=0.005..0.006 rows=50.00 loops=1)
+                     Buffers: shared hit=1
+               ->  Hash  (cost=18.10..18.10 rows=810 width=72) (actual time=0.018..0.018 rows=3.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on "SupplyChain"  (cost=0.00..18.10 rows=810 width=72) (actual time=0.006..0.006 rows=3.00 loops=1)
+                           Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=120
+ Planning Time: 0.348 ms
+ Execution Time: 0.104 ms
+(22 rows)
+

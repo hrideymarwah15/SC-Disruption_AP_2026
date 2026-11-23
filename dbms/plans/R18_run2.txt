@@ -1,0 +1,30 @@
+                                                                                QUERY PLAN                                                                                
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Limit  (cost=28.42..28.43 rows=3 width=180) (actual time=0.030..0.031 rows=8.00 loops=1)
+   Buffers: shared hit=9
+   ->  Sort  (cost=28.42..28.43 rows=3 width=180) (actual time=0.030..0.031 rows=8.00 loops=1)
+         Sort Key: "SimulationRun"."startedAt" DESC, "SimulationRun".id DESC
+         Sort Method: quicksort  Memory: 26kB
+         Buffers: shared hit=9
+         ->  Hash Join  (cost=11.32..28.40 rows=3 width=180) (actual time=0.016..0.018 rows=8.00 loops=1)
+               Hash Cond: ("SimulationRun"."scenarioId" = "Scenario".id)
+               Buffers: shared hit=3
+               ->  Seq Scan on "SimulationRun"  (cost=0.00..15.60 rows=560 width=116) (actual time=0.002..0.003 rows=20.00 loops=1)
+                     Buffers: shared hit=1
+               ->  Hash  (cost=11.28..11.28 rows=3 width=96) (actual time=0.010..0.011 rows=2.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=2
+                     ->  Bitmap Heap Scan on "Scenario"  (cost=4.17..11.28 rows=3 width=96) (actual time=0.007..0.007 rows=2.00 loops=1)
+                           Recheck Cond: ("supplyChainId" = 'sc_01'::text)
+                           Heap Blocks: exact=1
+                           Buffers: shared hit=2
+                           ->  Bitmap Index Scan on "Scenario_supplyChainId_createdAt_idx"  (cost=0.00..4.17 rows=3 width=0) (actual time=0.004..0.004 rows=2.00 loops=1)
+                                 Index Cond: ("supplyChainId" = 'sc_01'::text)
+                                 Index Searches: 1
+                                 Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=160
+ Planning Time: 0.288 ms
+ Execution Time: 0.048 ms
+(26 rows)
+
