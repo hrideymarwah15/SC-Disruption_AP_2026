@@ -1,0 +1,24 @@
+                                                       QUERY PLAN                                                       
+------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=18.23..18.23 rows=1 width=31) (actual time=0.045..0.046 rows=22.00 loops=1)
+   Sort Key: "Edge"."fromNodeId", "Edge".id
+   Sort Method: quicksort  Memory: 26kB
+   Buffers: shared hit=5
+   ->  Hash Join  (cost=16.54..18.22 rows=1 width=31) (actual time=0.017..0.021 rows=22.00 loops=1)
+         Hash Cond: ("Edge"."fromNodeId" = "Node".id)
+         Buffers: shared hit=2
+         ->  Seq Scan on "Edge"  (cost=0.00..1.54 rows=54 width=31) (actual time=0.003..0.005 rows=54.00 loops=1)
+               Buffers: shared hit=1
+         ->  Hash  (cost=16.50..16.50 rows=3 width=32) (actual time=0.009..0.009 rows=15.00 loops=1)
+               Buckets: 1024  Batches: 1  Memory Usage: 9kB
+               Buffers: shared hit=1
+               ->  Seq Scan on "Node"  (cost=0.00..16.50 rows=3 width=32) (actual time=0.003..0.005 rows=15.00 loops=1)
+                     Filter: ("supplyChainId" = 'sc_01'::text)
+                     Rows Removed by Filter: 35
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=113
+ Planning Time: 0.562 ms
+ Execution Time: 0.068 ms
+(20 rows)
+

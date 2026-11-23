@@ -1,0 +1,18 @@
+                                                                   QUERY PLAN                                                                   
+------------------------------------------------------------------------------------------------------------------------------------------------
+ Nested Loop  (cost=0.30..16.36 rows=1 width=104) (actual time=0.008..0.008 rows=1.00 loops=1)
+   Buffers: shared hit=4
+   ->  Index Scan using "SimulationRun_pkey" on "SimulationRun"  (cost=0.15..8.17 rows=1 width=32) (actual time=0.005..0.005 rows=1.00 loops=1)
+         Index Cond: (id = 'run_01'::text)
+         Index Searches: 1
+         Buffers: shared hit=2
+   ->  Index Scan using "Scenario_pkey" on "Scenario"  (cost=0.15..8.17 rows=1 width=104) (actual time=0.002..0.002 rows=1.00 loops=1)
+         Index Cond: (id = "SimulationRun"."scenarioId")
+         Index Searches: 1
+         Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=248
+ Planning Time: 0.306 ms
+ Execution Time: 0.024 ms
+(14 rows)
+

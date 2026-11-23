@@ -1,0 +1,14 @@
+                                                    QUERY PLAN                                                    
+------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=44.32..45.85 rows=610 width=104) (actual time=0.018..0.018 rows=10.00 loops=1)
+   Sort Key: id
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=4
+   ->  Seq Scan on "Product"  (cost=0.00..16.10 rows=610 width=104) (actual time=0.002..0.003 rows=10.00 loops=1)
+         Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=88
+ Planning Time: 0.165 ms
+ Execution Time: 0.027 ms
+(10 rows)
+

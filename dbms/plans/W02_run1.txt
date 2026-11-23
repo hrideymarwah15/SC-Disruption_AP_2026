@@ -1,0 +1,10 @@
+                                           QUERY PLAN                                            
+-------------------------------------------------------------------------------------------------
+ Insert on "Node"  (cost=0.00..0.01 rows=0 width=0) (actual time=0.062..0.063 rows=0.00 loops=1)
+   Buffers: shared hit=33
+   ->  Result  (cost=0.00..0.01 rows=1 width=128) (actual time=0.001..0.002 rows=1.00 loops=1)
+ Planning Time: 0.020 ms
+ Trigger for constraint Node_supplyChainId_fkey: time=0.251 calls=1
+ Execution Time: 0.332 ms
+(6 rows)
+

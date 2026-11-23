@@ -1,0 +1,11 @@
+                                           QUERY PLAN                                            
+-------------------------------------------------------------------------------------------------
+ Insert on "Edge"  (cost=0.00..0.01 rows=0 width=0) (actual time=0.097..0.097 rows=0.00 loops=1)
+   Buffers: shared hit=43
+   ->  Result  (cost=0.00..0.01 rows=1 width=112) (actual time=0.000..0.000 rows=1.00 loops=1)
+ Planning Time: 0.038 ms
+ Trigger for constraint Edge_fromNodeId_fkey: time=0.195 calls=1
+ Trigger for constraint Edge_toNodeId_fkey: time=0.023 calls=1
+ Execution Time: 0.325 ms
+(7 rows)
+

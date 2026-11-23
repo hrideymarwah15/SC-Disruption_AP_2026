@@ -1,0 +1,18 @@
+                                                                         QUERY PLAN                                                                          
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Delete on "SimulationEvent"  (cost=4.58..12.09 rows=0 width=0) (actual time=0.026..0.026 rows=0.00 loops=1)
+   Buffers: shared hit=43
+   ->  Bitmap Heap Scan on "SimulationEvent"  (cost=4.58..12.09 rows=40 width=6) (actual time=0.013..0.014 rows=40.00 loops=1)
+         Recheck Cond: ("runId" = 'run_01'::text)
+         Heap Blocks: exact=1
+         Buffers: shared hit=3
+         ->  Bitmap Index Scan on "SimulationEvent_runId_step_sequence_idx"  (cost=0.00..4.58 rows=40 width=0) (actual time=0.006..0.006 rows=40.00 loops=1)
+               Index Cond: ("runId" = 'run_01'::text)
+               Index Searches: 1
+               Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=105
+ Planning Time: 0.176 ms
+ Execution Time: 0.068 ms
+(14 rows)
+

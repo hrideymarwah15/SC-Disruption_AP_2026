@@ -1,0 +1,26 @@
+                                                                         QUERY PLAN                                                                          
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=17.70..17.71 rows=2 width=136) (actual time=0.018..0.019 rows=3.00 loops=1)
+   Sort Key: "Disruption"."startStep"
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=7
+   ->  Nested Loop  (cost=4.31..17.69 rows=2 width=136) (actual time=0.009..0.010 rows=3.00 loops=1)
+         Buffers: shared hit=4
+         ->  Index Scan using "SimulationRun_pkey" on "SimulationRun"  (cost=0.15..8.17 rows=1 width=32) (actual time=0.005..0.005 rows=1.00 loops=1)
+               Index Cond: (id = 'run_01'::text)
+               Index Searches: 1
+               Buffers: shared hit=2
+         ->  Bitmap Heap Scan on "Disruption"  (cost=4.16..9.50 rows=2 width=136) (actual time=0.003..0.003 rows=3.00 loops=1)
+               Recheck Cond: ("scenarioId" = "SimulationRun"."scenarioId")
+               Heap Blocks: exact=1
+               Buffers: shared hit=2
+               ->  Bitmap Index Scan on "Disruption_scenarioId_startStep_idx"  (cost=0.00..4.16 rows=2 width=0) (actual time=0.001..0.001 rows=3.00 loops=1)
+                     Index Cond: ("scenarioId" = "SimulationRun"."scenarioId")
+                     Index Searches: 1
+                     Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=260
+ Planning Time: 0.293 ms
+ Execution Time: 0.039 ms
+(22 rows)
+

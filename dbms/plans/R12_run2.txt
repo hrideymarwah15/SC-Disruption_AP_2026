@@ -1,0 +1,12 @@
+                                                                QUERY PLAN                                                                 
+-------------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using "SimulationRun_pkey" on "SimulationRun"  (cost=0.15..8.17 rows=1 width=116) (actual time=0.005..0.005 rows=1.00 loops=1)
+   Index Cond: (id = 'run_01'::text)
+   Index Searches: 1
+   Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=95
+ Planning Time: 0.158 ms
+ Execution Time: 0.020 ms
+(8 rows)
+

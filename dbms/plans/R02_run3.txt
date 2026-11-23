@@ -1,0 +1,12 @@
+                                                              QUERY PLAN                                                              
+--------------------------------------------------------------------------------------------------------------------------------------
+ Index Scan using "SupplyChain_pkey" on "SupplyChain"  (cost=0.15..8.17 rows=1 width=72) (actual time=0.007..0.007 rows=1.00 loops=1)
+   Index Cond: (id = 'sc_01'::text)
+   Index Searches: 1
+   Buffers: shared hit=2
+ Planning:
+   Buffers: shared hit=66
+ Planning Time: 0.153 ms
+ Execution Time: 0.023 ms
+(8 rows)
+

@@ -1,0 +1,20 @@
+                                                                      QUERY PLAN                                                                       
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=9.51..9.52 rows=2 width=136) (actual time=0.021..0.021 rows=3.00 loops=1)
+   Sort Key: "startStep"
+   Sort Method: quicksort  Memory: 25kB
+   Buffers: shared hit=5
+   ->  Bitmap Heap Scan on "Disruption"  (cost=4.16..9.50 rows=2 width=136) (actual time=0.010..0.010 rows=3.00 loops=1)
+         Recheck Cond: ("scenarioId" = 'scn_01'::text)
+         Heap Blocks: exact=1
+         Buffers: shared hit=2
+         ->  Bitmap Index Scan on "Disruption_scenarioId_startStep_idx"  (cost=0.00..4.16 rows=2 width=0) (actual time=0.005..0.005 rows=3.00 loops=1)
+               Index Cond: ("scenarioId" = 'scn_01'::text)
+               Index Searches: 1
+               Buffers: shared hit=1
+ Planning:
+   Buffers: shared hit=106
+ Planning Time: 0.191 ms
+ Execution Time: 0.038 ms
+(16 rows)
+

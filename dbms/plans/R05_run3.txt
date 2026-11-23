@@ -1,0 +1,30 @@
+                                                                QUERY PLAN                                                                 
+-------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=19.52..19.52 rows=1 width=85) (actual time=0.054..0.055 rows=37.00 loops=1)
+   Sort Key: "Inventory"."nodeId", "Inventory"."productId"
+   Sort Method: quicksort  Memory: 27kB
+   Buffers: shared hit=79
+   ->  Nested Loop  (cost=16.69..19.51 rows=1 width=85) (actual time=0.016..0.035 rows=37.00 loops=1)
+         Buffers: shared hit=76
+         ->  Hash Join  (cost=16.54..18.89 rows=1 width=21) (actual time=0.013..0.020 rows=37.00 loops=1)
+               Hash Cond: ("Inventory"."nodeId" = "Node".id)
+               Buffers: shared hit=2
+               ->  Seq Scan on "Inventory"  (cost=0.00..2.07 rows=107 width=21) (actual time=0.003..0.005 rows=107.00 loops=1)
+                     Buffers: shared hit=1
+               ->  Hash  (cost=16.50..16.50 rows=3 width=32) (actual time=0.007..0.007 rows=15.00 loops=1)
+                     Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                     Buffers: shared hit=1
+                     ->  Seq Scan on "Node"  (cost=0.00..16.50 rows=3 width=32) (actual time=0.003..0.004 rows=15.00 loops=1)
+                           Filter: ("supplyChainId" = 'sc_01'::text)
+                           Rows Removed by Filter: 35
+                           Buffers: shared hit=1
+         ->  Index Scan using "Product_pkey" on "Product"  (cost=0.15..0.62 rows=1 width=96) (actual time=0.000..0.000 rows=1.00 loops=37)
+               Index Cond: (id = "Inventory"."productId")
+               Index Searches: 37
+               Buffers: shared hit=74
+ Planning:
+   Buffers: shared hit=170
+ Planning Time: 0.324 ms
+ Execution Time: 0.080 ms
+(26 rows)
+

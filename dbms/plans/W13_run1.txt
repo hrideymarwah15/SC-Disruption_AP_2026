@@ -1,0 +1,15 @@
+                                                 QUERY PLAN                                                  
+-------------------------------------------------------------------------------------------------------------
+ Insert on "SimulationMetric"  (cost=0.00..0.01 rows=0 width=0) (actual time=0.079..0.079 rows=0.00 loops=1)
+   Conflict Resolution: UPDATE
+   Conflict Arbiter Indexes: SimulationMetric_runId_key
+   Tuples Inserted: 0
+   Conflicting Tuples: 1
+   Buffers: shared hit=26
+   ->  Result  (cost=0.00..0.01 rows=1 width=200) (actual time=0.001..0.001 rows=1.00 loops=1)
+ Planning:
+   Buffers: shared hit=44
+ Planning Time: 0.055 ms
+ Execution Time: 0.118 ms
+(11 rows)
+
