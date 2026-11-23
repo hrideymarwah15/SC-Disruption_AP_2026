@@ -26,7 +26,7 @@ import subprocess
 import sys
 
 QUERIES_FILE = "dbms/04_queries.sql"
-PLANS_DIR = "dbms/plans"
+PLANS_DIR = os.environ.get("AP_PLANS_DIR", "dbms/plans")
 SKIP_QUERIES = {"R08"}  # Composite simulation input, assembled in JS from R02-R06
 
 # Parameter values (from the catalogue comment blocks).
@@ -143,7 +143,7 @@ def run_single(db_name, qid, qtype, sql_with_params, run_no, plans_dir):
 
     try:
         result = subprocess.run(
-            ["psql", "-d", db_name, "-q", "-c", wrapped],
+            ["psql", "-X", "-v", "ON_ERROR_STOP=1", "-d", db_name, "-q", "-c", wrapped],
             capture_output=True, text=True, timeout=120,
         )
     except subprocess.TimeoutExpired as exc:
@@ -183,63 +183,35 @@ def run_single(db_name, qid, qtype, sql_with_params, run_no, plans_dir):
     return exec_time
 
 
-def verify_rollback(db_name, plans_dir):
-    """Verify that every WRITE left no persistent changes.
-
-    Compares full row contents (not just counts) for SimulationRun before/after,
-    including status and completedAt.
-    """
-    # Capture before-state of SimulationRun.
-    before = subprocess.run(
-        ["psql", "-d", db_name, "-t", "-A", "-c",
-         "SELECT id, status, completedAt FROM \"SimulationRun\" ORDER BY id;"],
-        capture_output=True, text=True,
-    ).stdout
-
-    # Run W15 once (it targets run_01, setting status='FAILED').
-    qid = "W15"
-    sql = PARAMS[qid] and None  # placeholder
-    sql_raw = None
-    for q in parse_queries(QUERIES_FILE):
-        if q["id"] == qid:
-            sql_raw = q["sql"]
-            break
-    if sql_raw is None:
-        raise SystemExit(f"ERROR: {qid} not found in catalogue")
-
-    sql_with_params = substitute_params(sql_raw, PARAMS[qid])
-    wrapped = f"BEGIN;\nEXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT)\n{sql_with_params};\nROLLBACK;"
-
-    result = subprocess.run(
-        ["psql", "-d", db_name, "-q", "-c", wrapped],
-        capture_output=True, text=True, timeout=120,
-    )
-    if result.returncode != 0:
-        raise SystemExit(f"ERROR: rollback-check W15 exited {result.returncode}: {result.stderr}")
-    if "ERROR" in result.stdout or "ERROR" in result.stderr:
-        raise SystemExit(f"ERROR: rollback-check W15 produced SQL error: {result.stdout[:500]}")
-
-    # Capture after-state.
-    after = subprocess.run(
-        ["psql", "-d", db_name, "-t", "-A", "-c",
-         "SELECT id, status, completedAt FROM \"SimulationRun\" ORDER BY id;"],
-        capture_output=True, text=True,
-    ).stdout
-
-    if before != after:
-        raise SystemExit(
-            "ERROR: W15 rollback failed — SimulationRun contents changed:\n"
-            f"BEFORE:\n{before}\nAFTER:\n{after}"
+def snapshot(db_name):
+    """Capture every application row; failed reads must never count as evidence."""
+    tables = ["SupplyChain", "Node", "Edge", "Product", "Inventory", "Order",
+              "OrderItem", "Scenario", "Disruption", "SimulationRun",
+              "SimulationEvent", "SimulationMetric"]
+    state = {}
+    for table in tables:
+        sql = f'SELECT row_to_json(t)::text FROM "{table}" t ORDER BY id;'
+        result = subprocess.run(
+            ["psql", "-X", "-v", "ON_ERROR_STOP=1", "-d", db_name,
+             "-t", "-A", "-c", sql], capture_output=True, text=True, timeout=120,
         )
+        if result.returncode != 0 or "ERROR" in result.stderr:
+            raise SystemExit(f"ERROR: snapshot of {table} failed: {result.stderr}")
+        state[table] = result.stdout
+    if not state["SimulationRun"].strip():
+        raise SystemExit("ERROR: rollback verification requires populated SimulationRun")
+    return state
 
-    # Also verify W15 plan file contains no COMMIT.
-    w15_plan = os.path.join(plans_dir, "W15_run1.txt")
-    with open(w15_plan) as f:
-        w15_content = f.read()
-    if "COMMIT" in w15_content.upper():
-        raise SystemExit("ERROR: W15 plan output contains COMMIT — transaction leaked")
 
-    print("Rollback verification passed: W15 update did not persist; SimulationRun unchanged.")
+def verify_rollback(db_name, plans_dir):
+    """Check W15 against full row snapshots, including quoted JSON field names."""
+    before = snapshot(db_name)
+    query = next(q for q in parse_queries(QUERIES_FILE) if q["id"] == "W15")
+    sql = substitute_params(query["sql"], PARAMS["W15"])
+    run_single(db_name, "W15_rollback_check", "WRITE", sql, 1, plans_dir)
+    if before != snapshot(db_name):
+        raise SystemExit("ERROR: W15 rollback changed database contents")
+    print("Rollback verification passed: W15 left all application rows unchanged.")
 
 
 def main():
@@ -267,6 +239,11 @@ def main():
             break
     print("Regression check passed: W15 extraction excludes COMMIT.")
 
+    expected = {f"R{i:02d}" for i in range(1, 19)} | {f"W{i:02d}" for i in range(1, 16)}
+    ids = [q["id"] for q in queries]
+    if len(ids) != len(expected) or set(ids) != expected:
+        raise SystemExit("ERROR: catalogue must contain each of the 33 query IDs exactly once")
+    before = snapshot(db_name)
     results = []
     for q in queries:
         qid = q["id"]
@@ -291,6 +268,8 @@ def main():
                 "execution_time_ms": exec_time,
             })
             print(f"  Run {run_no}: {exec_time:.3f} ms")
+            if qtype == "WRITE" and snapshot(db_name) != before:
+                raise SystemExit(f"ERROR: {qid} run {run_no} changed database contents")
 
         results.append(query_results)
 

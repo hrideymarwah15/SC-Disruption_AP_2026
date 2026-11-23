@@ -2,17 +2,17 @@
 # AP CP4 Benchmark Runner — shell wrapper around dbms/run_benchmark.py
 #
 # Usage:
-#   ./benchmark.sh <database_name> [schema_file] [fixture_file] [queries_file]
+#   ./benchmark.sh <database_name> [schema_file] [fixture_file]
 #
 # Example:
-#   ./benchmark.sh sc_disruption_test dbms/03_schema.sql dbms/fixture_data.sql dbms/04_queries.sql
+#   ./benchmark.sh sc_disruption_test dbms/03_schema.sql dbms/fixture_data.sql
 
 set -euo pipefail
 
-DB_NAME="${1:-sc_disruption_test}"
+DB_NAME="${1:?Supply a new disposable database name}"
 SCHEMA_FILE="${2:-dbms/03_schema.sql}"
 FIXTURE_FILE="${3:-dbms/fixture_data.sql}"
-QUERIES_FILE="${4:-dbms/04_queries.sql}"
+QUERIES_FILE="dbms/04_queries.sql"
 PLANS_DIR="dbms/plans"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -45,17 +45,16 @@ echo "========================================="
 
 # Create a fresh, disposable database. Never run against an application or
 # production database — the caller must supply a throwaway name.
-dropdb --if-exists "$DB_NAME" >/dev/null 2>&1 || true
 createdb "$DB_NAME"
 
 echo "Applying schema..."
-psql -d "$DB_NAME" -f "$SCHEMA_FILE" -q
+psql -X -v ON_ERROR_STOP=1 -d "$DB_NAME" -f "$SCHEMA_FILE" -q
 
 echo "Loading fixture data..."
-psql -d "$DB_NAME" -f "$FIXTURE_FILE" -q
+psql -X -v ON_ERROR_STOP=1 -d "$DB_NAME" -f "$FIXTURE_FILE" -q
 
 echo "Recording fixture counts..."
-psql -d "$DB_NAME" -c "
+psql -X -v ON_ERROR_STOP=1 -d "$DB_NAME" -c "
   SELECT 'SupplyChain' AS table_name, COUNT(*) FROM \"SupplyChain\"
   UNION ALL SELECT 'Node', COUNT(*) FROM \"Node\"
   UNION ALL SELECT 'Edge', COUNT(*) FROM \"Edge\"

@@ -87,10 +87,10 @@ application. Not directly executable as SQL. Not measured. No timing claimed.
 
 All 15 WRITE queries (W01–W15) executed inside `BEGIN; EXPLAIN ANALYZE ...; ROLLBACK;`.
 
-Rollback was verified for W15 by comparing full `SimulationRun` row contents
-(`id`, `status`, `completedAt`) before and after execution. The contents were
-identical — no persisted update. Additionally, the W15 plan output was checked
-to confirm it contains no `COMMIT` statement.
+The corrected runner snapshots every application table before measurement and
+compares full row contents after each timed write. Snapshot failures stop the run.
+It also repeats W15 separately and compares all rows, including SimulationRun
+status and completedAt. The catalogue parser excludes the transaction footer.
 
 No sequence objects exist in the AP schema, so no sequence-gap claims are made.
 
@@ -158,3 +158,13 @@ Raw plans for each query are saved as `dbms/plans/<query_id>_run<N>.txt` (N=1,2,
 
 *Measured by AP CP4 benchmark procedure. Do not edit timings manually;
 regenerate by re-running the benchmark.*
+## Correction verification (23 November 2026)
+
+Aaditi verified the corrected runner on a fresh disposable database using local
+PostgreSQL 15.18: 32 queries × 3 runs succeeded; R08 was explicitly skipped.
+All per-write row-content comparisons and the extra W15 rollback check passed.
+Three automated regression checks passed (`python3 -m unittest discover -s dbms -p test_benchmark.py`).
+This additional verification does not replace the PostgreSQL 18.6 timing evidence
+above; its outputs were kept separately to avoid mixing environments.
+The shell wrapper now creates a new database and fails if that name exists; it
+never drops an existing database. Schema and fixture loading stop on SQL errors.
